@@ -1,37 +1,78 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">BlazorBattles</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-    </ul>
-</div>
+    
+        <div class="top-row pl-4 navbar navbar-dark">
+            <a class="navbar-brand" href=""><img src="icons/axe.png">Blazor Battles</a>
+            <button class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
 
-@code {
-    private bool collapseNavMenu = true;
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
 
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
+                <AuthorizeView>
+                    <Authorized>
+
+
+
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="build">
+                                <span class="oi oi-wrench" aria-hidden="true"></span> Build
+                            </NavLink>
+                        </li>
+
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="army">
+                                <span class="oi oi-people" aria-hidden="true"></span> My Army
+                            </NavLink>
+                        </li>
+
+                        <li class="nav-item px-3">
+                            <a class="nav-link" @onclick="Logout" style="cursor: pointer;">
+                                <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                            </a>
+                        </li>
+
+                    </Authorized>
+
+                    <NotAuthorized>
+
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="register">
+                                <span class="oi oi-pencil" aria-hidden="true"></span> Register
+                            </NavLink>
+                        </li>
+
+                    </NotAuthorized>
+                </AuthorizeView>
+            </ul>
+        </div>
+    
+
+    @code {
+        private bool collapseNavMenu = true;
+        private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+        private void ToggleNavMenu()
+        {
+            collapseNavMenu = !collapseNavMenu;
+        }
+
+        private async void Logout()
+        {
+            await LocalStorage.RemoveItemAsync("isAuthenticated");
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            NavigationManager.NavigateTo("/");
+        }
+
+
     }
-}
