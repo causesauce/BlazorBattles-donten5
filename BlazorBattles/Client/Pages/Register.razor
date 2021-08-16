@@ -1,7 +1,8 @@
 ﻿@page "/register"
 @inject IUnitService UnitService
-@inject IJSRuntime JSRuntime 
-@inject NavigationManager NavigationManager 
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthService
+@inject IToastService ToastService
 
 <h3>Register</h3>
 
@@ -34,12 +35,13 @@
     <div class="form-group">
         <label for="startUnit">Start Unit</label>
         @*<InputSelect id="startUnit" @bind-Value="user.StartUnitId" class="form-control">
-            @foreach (var unit in UnitService.Units)
-            {
-                <option value="@unit.Id">@unit.Title</option>
-            }
-        </InputSelect>*@
-        <InputRadioGroup id="startUnit" @bind-Value="user.StartUnitId" class="form-control"><br />
+                @foreach (var unit in UnitService.Units)
+                {
+                    <option value="@unit.Id">@unit.Title</option>
+                }
+            </InputSelect>*@
+        <InputRadioGroup id="startUnit" @bind-Value="user.StartUnitId" class="form-control">
+            <br />
             @foreach (var unit in UnitService.Units)
             {
                 <InputRadio Value="@unit.Id" /><span style="padding-left: 5px;">@unit.Title</span><br />
@@ -70,9 +72,24 @@
 @code {
     UserRegister user = new UserRegister();
 
-    void HandleRegistration()
+    protected override async Task OnInitializedAsync()
     {
-        JSRuntime.InvokeVoidAsync("console.log", user);
-        NavigationManager.NavigateTo("login");
+        await UnitService.LoadUnitsAsync();
     }
+
+    async void HandleRegistration()
+    {
+        var result = await AuthService.Register(user);
+        if (result.Success)
+        {
+            ToastService.ShowSuccess(result.Message);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ToastService.ShowError(result.Message);
+        }
+    }
+
+
 }
