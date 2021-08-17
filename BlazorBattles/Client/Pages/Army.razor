@@ -34,6 +34,9 @@
 
 
     </table>
+    <center>
+        <button class="btn btn-warning" @onclick="RevieArmy">Reviev Your Army for 1000 Bananas</button>
+    </center>
 }
 else
 {
@@ -46,5 +49,10 @@ else
     {
         await UnitService.LoadUnitsAsync();
         await UnitService.LoadUserUnitsAsync();
+    }
+
+    private async Task RevieArmy()
+    {
+        await UnitService.RevievArmy();
     }
 }

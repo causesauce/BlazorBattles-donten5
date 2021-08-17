@@ -4,14 +4,16 @@ using BlazorBattles.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BlazorBattles.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210817124712_Battles")]
+    partial class Battles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,7 +34,10 @@ namespace BlazorBattles.Server.Migrations
                     b.Property<DateTime>("BattleDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("OpponentId")
+                    b.Property<int?>("OpponentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OpponrntId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoundsFought")
@@ -166,8 +171,7 @@ namespace BlazorBattles.Server.Migrations
                     b.HasOne("BlazorBattles.Shared.User", "Opponent")
                         .WithMany()
                         .HasForeignKey("OpponentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("BlazorBattles.Shared.User", "Winner")
                         .WithMany()

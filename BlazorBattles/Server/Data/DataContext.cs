@@ -20,5 +20,24 @@ namespace BlazorBattles.Server.Data
 
         public DbSet<UserUnit> UserUnits { get; set; }
 
+        public DbSet<Battle> Battles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Attacker)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Opponent)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Battle>()
+                .HasOne(b => b.Winner)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
